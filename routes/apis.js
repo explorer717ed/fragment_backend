@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pup = require('puppeteer');
 const cheerio = require('cheerio');
+const unirest = require("unirest");
 
 router.get('/images',(req, res)=>{
   res.json({message: "第一個api?"})
@@ -56,6 +57,43 @@ router.route('/dictionary/:query')
     browser.close();
   }
 
+})
+
+router.route('/translate').get(async (request, rsp) => {
+  console.log('translate query: ',request.query);
+  const words = request.query.word
+  if (!words) rsp({error:"no word"})
+  const from = request.query.from || "en"
+  const to = request.query.to || "zh-Hant"
+
+  const req = unirest("POST", "https://microsoft-translator-text.p.rapidapi.com/translate");
+  const reqData = Array.isArray(words) ? words.map(one=>{ return { "Text": one }}) : [{"Text": words}]
+
+  req.query({
+    to,
+    "api-version": "3.0",
+    from,
+    "profanityAction": "NoAction",
+    "textType": "plain"
+  });
+
+  req.headers({
+    "content-type": "application/json",
+    "x-rapidapi-key": process.env.RAPIDAPI_KEY,
+    "x-rapidapi-host": process.env.RAPIDAPI_HOST,
+    "useQueryString": true
+  });
+
+  req.type("json");
+  req.send(reqData);
+
+  req.end(function (res) {
+    if (res.error) throw new Error(res.error);
+
+    console.log('translate',res.body);
+    rsp.json(res.body)
+  });
+  
 })
 
 module.exports = router;
