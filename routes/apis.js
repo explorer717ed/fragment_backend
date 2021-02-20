@@ -62,7 +62,7 @@ router.route('/dictionary/:query')
 router.route('/translate').get(async (request, rsp) => {
   console.log('translate query: ',request.query);
   const words = request.query.word
-  if (!words) rsp({error:"no word"})
+  if (!words) rsp.status(400).json({error:"Need 'word' in http query."})
   const from = request.query.from || "en"
   const to = request.query.to || "zh-Hant"
 
@@ -88,9 +88,9 @@ router.route('/translate').get(async (request, rsp) => {
   req.send(reqData);
 
   req.end(function (res) {
-    if (res.error) throw new Error(res.error);
+    console.log('MS translate result: ', res.body);
+    if (res.error) return rsp.status(res.error.status).json(res.body);
 
-    console.log('translate',res.body);
     rsp.json(res.body)
   });
   
