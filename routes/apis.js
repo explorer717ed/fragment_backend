@@ -62,9 +62,11 @@ router.route('/dictionary/:query')
 router.route('/translate').get(async (request, rsp) => {
   console.log('translate query: ',request.query);
   const words = request.query.word
-  if (!words) rsp.status(400).json({error:"Need 'word' in http query."})
+  if (!words) return rsp.status(400).json({error:"Need 'word' in http query."});
+
   const from = request.query.from || "en"
   const to = request.query.to || "zh-Hant"
+  if (!words) return rsp.status(400).json({error:"Need 'to' in http query."});
 
   const req = unirest("POST", "https://microsoft-translator-text.p.rapidapi.com/translate");
   const reqData = Array.isArray(words) ? words.map(one=>{ return { "Text": one }}) : [{"Text": words}]
