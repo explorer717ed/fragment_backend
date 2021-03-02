@@ -6,9 +6,12 @@ const Definition = require('../models');
 
 const scrapeDefinition = (word, from, to, cb) => {
   let url = "";
+  let reference = {dictionary:"", url:""}
   if(from.includes('en') && to.includes('zh')){
     console.log('scrape en -> zh: ', word);
     url = dictionaryUrls.cambridge + word
+    reference.dictionary = "cambridge"
+    reference.url = url
   }else{
     return cb(null)
   }
@@ -22,7 +25,10 @@ const scrapeDefinition = (word, from, to, cb) => {
     res.on('end', () => {
       const parser = new Parser(word, from, to);
       const defs = parser.parse(html);
-      cb(defs)
+      cb({
+        reference,
+        result: defs
+      })
     })
   })
 }

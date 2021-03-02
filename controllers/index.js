@@ -13,7 +13,13 @@ const getDefinition = (req, rsp)=>{
     const url = "https://api.dictionaryapi.dev/api/v2/entries/"+ from +"/" + word
     console.log('dictionaryapi ' + from + ' : ' + word);
     unirest("GET", url).then(result=>{
-      rsp.send(result.body)
+      rsp.send({
+        reference:{
+          dictionary: "dictionaryapi",
+          url
+        },
+        result: result.body
+      })
     });
   }
 }
