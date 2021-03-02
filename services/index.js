@@ -58,7 +58,8 @@ class Parser {
       //發音 phonetics
       $('.dpron-i', wordHeader).each((i, el) => {
         oneDef.phonetics.push({
-          text: $('.pron', $(el)).text()
+          text: $('.pron', $(el)).text(),
+          region: $('.region', $(el)).text()
         })
       })
 

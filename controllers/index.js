@@ -10,8 +10,10 @@ const getDefinition = (req, rsp)=>{
       rsp.send(defs)
     })
   }else{
-    unirest("GET", "https://api.dictionaryapi.dev/api/v2/entries/"+ from +"/" + word).then(rsp=>{
-      console.log('dict', rsp);
+    const url = "https://api.dictionaryapi.dev/api/v2/entries/"+ from +"/" + word
+    console.log('dictionaryapi ' + from + ' : ' + word);
+    unirest("GET", url).then(result=>{
+      rsp.send(result.body)
     });
   }
 }
