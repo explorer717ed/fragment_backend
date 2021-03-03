@@ -6,8 +6,8 @@ const Definition = require('../models');
 
 const scrapeDefinition = (word, from, to, cb) => {
   let url = "";
-  let reference = {dictionary:"", url:""}
-  if(from.includes('en') && to.includes('zh')){
+  let reference = { dictionary:"", url:"" }
+  if( from.includes('en') && to.includes('zh') ){
     console.log('scrape en -> zh: ', word);
     url = dictionaryUrls.cambridge + word
     reference.dictionary = "cambridge"
@@ -25,9 +25,12 @@ const scrapeDefinition = (word, from, to, cb) => {
     res.on('end', () => {
       const parser = new Parser(word, from, to);
       const defs = parser.parse(html);
+      let message = null
+      if(defs.length === 0) message = "Didn't find any result."
       cb({
         reference,
-        result: defs
+        result: defs,
+        message
       })
     })
   })
@@ -49,6 +52,8 @@ class Parser {
   }
 
   parseCambridge(html){
+    if(!html) return []
+
     const $ = cheerio.load(html);
     const headFirst = $('.pos-header')[0]
     let result = {
