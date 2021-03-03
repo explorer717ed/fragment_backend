@@ -50,26 +50,27 @@ class Parser {
 
   parseCambridge(html){
     const $ = cheerio.load(html);
-    let definitions = [];
+    const headFirst = $('.pos-header')[0]
+    let result = {
+      word: $('.headword .hw', headFirst).text(),
+      phonetics:[],
+      meanings:[]
+    };
+    //發音 phonetics
+    $('.dpron-i', headFirst).each((i, el) => {
+      result.phonetics.push({
+        text: $('.pron', $(el)).text(),
+        region: $('.region', $(el)).text()
+      })
+    })
 
     $('#page-content .entry-body__el').each((i, el) => {
+      //詞性
       const wordHeader =  $('.pos-header',$(el))
       const pos = $('.pos', wordHeader).text()
-      let oneDef = {
-        word: $('.headword .hw', wordHeader).text(),
-        phonetics:[],
-        meanings:[]
-      };
-
-      //發音 phonetics
-      $('.dpron-i', wordHeader).each((i, el) => {
-        oneDef.phonetics.push({
-          text: $('.pron', $(el)).text(),
-          region: $('.region', $(el)).text()
-        })
-      })
 
       //定義
+      const definitions = []
       $('.def-block', el).each((i, el) => {
         const definition = $('.def', $(el)).text()
         const translation = $('.def-body .trans:nth-child(1)', $(el)).text()
@@ -81,18 +82,18 @@ class Parser {
           example.push({sentence:eg, translation: trans})
         })
 
-        oneDef.meanings.push({
-          partOfSpeech: pos,
+        definitions.push({
           definition, 
           translation, 
           countable, 
           example
         })
       })
+      result.meanings.push({definitions, "partOfSpeech": pos})
       
-      definitions.push(oneDef)
     })
-    return definitions
+
+    return [result]
   }
 }
 
