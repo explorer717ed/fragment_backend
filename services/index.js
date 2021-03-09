@@ -8,6 +8,7 @@ const scrapeDefinition = (word, from, to, cb) => {
   let url = "";
   let reference = { dictionary:"", url:"" }
   if( from.includes('en') && to.includes('zh') ){
+    word = word.trim().replace(" ","-")
     console.log('scrape en -> zh: ', word);
     url = dictionaryUrls.cambridge + word
     reference.dictionary = "cambridge"
