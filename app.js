@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
-  "origin": ["http://192.168.2.185:8100", "http://localhost:8100"],
+  "origin": ["http://192.168.2.185:8100", "http://localhost:8100","http://localhost","capacitor://localhost"],
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
 }));
 app.use('/', indexRouter);
